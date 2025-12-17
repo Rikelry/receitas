@@ -54,10 +54,9 @@ Diagramas UML estão disponíveis na pasta `docs/diagrams`:
 ## Instalação
 1. Baixar o repositório:
    ```bash
-   git clone <URL_DO_REPOSITORIO>
+   git clone https://github.com/mayllonveras/receitas/
    cd receitas
    ```
-   Substitua `<URL_DO_REPOSITORIO>` pelo endereço do seu repositório.
 2. Instalar dependências:
    ```bash
    npm install
@@ -100,6 +99,9 @@ Receitas
 Códigos de erro: as validações retornam `400` com `{ error: "mensagem" }` (middleware em `src/presentation/http/middlewares/errorHandler.ts`).
 
 ## Clientes HTTP (Insomnia/Postman)
+- A pasta `requests` contém coleções de requisições prontas:
+  - `Insomnia_recipes_requests.yaml`: Coleção completa para importação direta no **Insomnia**.
+  - `recipes_requests.yaml`: Especificação OpenAPI/Swagger (se aplicável) ou coleção genérica.
 - Base URL: `http://localhost:3000` (ajuste `PORT` se necessário).
 - Headers: `Content-Type: application/json` para requisições com corpo.
 - Fluxo sugerido:
