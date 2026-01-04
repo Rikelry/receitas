@@ -141,7 +141,7 @@ Códigos de erro: as validações retornam `400` com `{ error: "mensagem" }` (mi
 
 ## Atualização do `Insomnia_recipes_requests.yaml`
 
-## Novas funcionalidades
+## Novas funcionalidades adicionadas
 
 ### Categorias Pré-definidas
 
@@ -228,3 +228,47 @@ receitas/
 - `npm run dev` — inicia em modo desenvolvimento (ts-node)
 - `npm run build` — compila TypeScript
 - `npm start` — executa o build compilado
+
+## Novas funcionalidades adicionadas ao sistema
+
+### Escalonamento de Porções
+
+Recalcula os ingredientes de uma receita para um novo número de porções, sem modificar ou persistir a receita original.
+
+### Regras que foram implementadas
+- O valor de `servings` deve ser maior que 0.
+- A receita deve existir.
+- As quantidades dos ingredientes são ajustadas proporcionalmente.
+- A operação não altera o estado do sistema.
+- A receita original permanece inalterada.
+
+### Cálculo
+- factor = newServings / recipe.servings
+### Endpoint
+- POST /recipes/:id/scale
+
+### Body
+```json
+{
+  "servings": 8
+}
+```
+### Exemplo 
+```json
+{
+  "id": "123",
+  "name": "Bolo de Cenoura",
+  "servings": 8,
+  "ingredients": [
+    { "ingredientId": "farinha", "quantity": 600, "unit": "g" },
+    { "ingredientId": "cenoura", "quantity": 4, "unit": "un" }
+  ]
+}
+```
+### Funcionamento
+- A receita é obtida pelo ID.
+- O fator proporcional é calculado.
+- As quantidades dos ingredientes são recalculadas.
+- Um novo objeto de receita é retornado.
+- Não há persistência de dados.
+- A receita original não é modificada.
