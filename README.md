@@ -139,6 +139,29 @@ Códigos de erro: as validações retornam `400` com `{ error: "mensagem" }` (mi
   - Crie um ambiente com variável `base_url` e use `{{ base_url }}` nas requisições.
   - Salve exemplos de corpo usando os arquivos em `requests/`.
 
+## Atualização do `Insomnia_recipes_requests.yaml`
+
+## Novas funcionalidades adicionadas
+
+### Categorias Pré-definidas
+
+O sistema passou a incluir um conjunto de categorias prontas, permitindo ao usuário criar rapidamente estruturas comuns sem precisar definir tudo manualmente. As categorias disponíveis são:
+
+- **Carnes**
+- **Massas**
+- **Saladas**
+- **Sopas**
+- **Sobremesas**
+
+Essas opções facilitam o início do fluxo de cadastro, oferecendo uma base sólida para a organização das receitas.
+
+### Create New Category
+
+Como agora existem categorias pré-definidas, o endpoint antes chamado **Create Category** foi renomeado para **Create New Category**.  
+Esse método permanece responsável por criar categorias personalizadas, permitindo ao usuário expandir a taxonomia do sistema além das cinco opções iniciais.
+
+A requisição aceita os mesmos parâmetros de antes, mantendo sua função original — criar qualquer categoria adicional que o usuário desejar.
+
 ## Exemplos rápidos (Windows PowerShell)
 - Criar categoria usando arquivo:
   ```powershell
@@ -205,3 +228,172 @@ receitas/
 - `npm run dev` — inicia em modo desenvolvimento (ts-node)
 - `npm run build` — compila TypeScript
 - `npm start` — executa o build compilado
+
+## Novas funcionalidades adicionadas ao sistema
+
+## Escalonamento de Porções
+
+Recalcula os ingredientes de uma receita para um novo número de porções, sem modificar ou persistir a receita original.
+
+### Regras que foram implementadas
+- O valor de `servings` deve ser maior que 0.
+- A receita deve existir.
+- As quantidades dos ingredientes são ajustadas proporcionalmente.
+- A operação não altera o estado do sistema.
+- A receita original permanece inalterada.
+
+### Cálculo
+- factor = newServings / recipe.servings
+
+### Endpoint
+- POST /recipes/:id/scale
+
+### Body
+```json
+{
+  "servings": 8
+}
+```
+### Exemplo 
+```json
+{
+  "id": "123",
+  "name": "Bolo de Cenoura",
+  "servings": 8,
+  "ingredients": [
+    { "ingredientId": "farinha", "quantity": 600, "unit": "g" },
+    { "ingredientId": "cenoura", "quantity": 4, "unit": "un" }
+  ]
+}
+```
+### Funcionamento
+- A receita é obtida pelo ID.
+- O fator proporcional é calculado.
+- As quantidades dos ingredientes são recalculadas.
+- Um novo objeto de receita é retornado.
+- Não há persistência de dados.
+- A receita original não é modificada.
+
+## Lista de Compras Consolidada
+
+Gera uma lista única de ingredientes combinando múltiplas receitas, somando quantidades iguais sem modificar nenhum dado original.
+
+### Regras que foram implementadas
+- O array recipeIds deve existir e não pode ser vazio.
+- Cada ID deve corresponder a uma receita existente.
+- Ingredientes iguais (mesmo ingredientId e mesma unit) são somados.
+- A operação não altera o estado do sistema.
+- Nenhuma receita é modificada ou persistida.
+- O retorno é apenas uma lista consolidada em memória.
+
+### Lógica de Consolidação
+- Para cada receita encontrada:
+- Percorre seus ingredientes.
+- Procura na lista final um item com o mesmo ingredientId e unit.
+- Se existir → soma a quantidade.
+- Se não existir → adiciona um novo item.
+
+### Endpoint
+- POST /recipes/shopping-list
+
+### Body 
+```json
+{
+  "recipeIds": ["123", "456", "789"]
+}
+```
+### Exemplo
+```json
+[
+  { "ingredientId": "farinha", "unit": "g", "quantity": 1200 },
+  { "ingredientId": "cenoura", "unit": "un", "quantity": 6 },
+  { "ingredientId": "açúcar", "unit": "g", "quantity": 800 }
+]
+```
+### Funcionamento
+- Cada receita é obtida pelo ID informado.
+- Todos os ingredientes são percorridos.
+- Ingredientes compatíveis são somados na lista final.
+- Um array consolidado é retornado.
+- Não há persistência de dados.
+- Nenhuma receita original é modificada.
+
+## Estados da Receita (Workflow)
+
+Controla o ciclo de vida das receitas, garantindo regras claras para criação, edição, publicação e arquivamento.
+
+### Regras que foram implementadas
+- Receitas começam sempre como draft.
+- Apenas receitas published aparecem nas listagens públicas.
+- Receitas draft podem ser editadas e excluídas.
+- Receitas published não podem ser excluídas (somente arquivadas).
+- Receitas archived não podem ser editadas.
+- Receitas archived não podem ser acessadas (tratadas como inexistentes).
+- As validações são aplicadas no serviço, garantindo consistência e mensagens de erro claras.
+
+### Transições de Estado
+- draft → published
+- published → archived
+
+### Endpoints
+
+#### Publicar receita
+POST /recipes/:id/publish
+
+- Status final:
+```json
+{
+  "status": "published"
+}
+```
+
+### Arquivar receita
+POST /recipes/:id/archive
+
+- Status final:
+```json
+{
+  "status": "archived"
+}
+```
+
+### Métodos do Serviço
+
+#### Publicar receita
+```ts
+publish(id: string): Promise<Recipe>
+```
+- Permite publicação apenas se a receita estiver em draft.
+
+#### Arquivar receita
+```ts
+archive(id: string): Promise<Recipe>
+```
+- Permite arquivamento apenas se a receita estiver em published.
+
+### Exemplos de Comportamento
+
+#### Tentativa de editar receita arquivada
+```txt
+Erro: "Recipe is archived and cannot be edited"
+```
+
+#### Tentativa de excluir receita publicada
+```txt
+Erro: "Only draft recipes can be deleted"
+```
+
+#### Tentativa de acessar receita arquivada
+```txt
+Erro: "Recipe not found"
+```
+
+### Funcionamento
+- As alterações de estado são armazenadas no repositório.
+- Todas as operações passam por validações internas no serviço.
+- O fluxo impede estados inválidos e garante consistência:
+```txt
+draft → criação e edição livre
+published → visível publicamente
+archived → bloqueada para edição e acesso
+```

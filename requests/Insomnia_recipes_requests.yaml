@@ -30,8 +30,9 @@ collection:
         send: true
         store: true
       rebuildPath: true
+
   - url: "{{baseUrl}}/categories"
-    name: Create Category
+    name: Create New Category
     meta:
       id: req_27fe2d550bfe4d8ea6ce68336fa12370
       created: 1765412821874
@@ -42,7 +43,7 @@ collection:
     method: POST
     body:
       mimeType: application/json
-      text: '{ "name": "Massas" }'
+      text: '{ "name": "DIGITE_AQUI_O_NOME_DA_CATEGORIA_NOVA" }'
     headers:
       - name: Content-Type
         value: application/json
@@ -58,6 +59,228 @@ collection:
         send: true
         store: true
       rebuildPath: true
+
+  # Parte atualizada por Mailson Sousa
+
+  - url: "{{baseUrl}}/categories"
+    name: Create Category [Carnes]
+    meta:
+      id: req_a1c3f2b7c5e44dbab12c1110b901e210
+      created: 1766000001000
+      modified: 1766000002000
+      isPrivate: false
+      description: ""
+      sortKey: -1766000001000
+    method: POST
+    body:
+      mimeType: application/json
+      text: '{ "name": "Carnes" }'
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.1.0
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+
+  - url: "{{baseUrl}}/categories"
+    name: Create Category [Massas]
+    meta:
+      id: req_d2f4a7d93bd9413f82b92d8822109bf1
+      created: 1766000003000
+      modified: 1766000004000
+      isPrivate: false
+      description: ""
+      sortKey: -1766000003000
+    method: POST
+    body:
+      mimeType: application/json
+      text: '{ "name": "Massas" }'
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.1.0
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{baseUrl}}/categories"
+    name: Create Category [Saladas]
+    meta:
+      id: req_f817cb3ff821400588d6cc912fbb983a
+      created: 1766000005000
+      modified: 1766000006000
+      isPrivate: false
+      description: ""
+      sortKey: -1766000005000
+    method: POST
+    body:
+      mimeType: application/json
+      text: '{ "name": "Saladas" }'
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.1.0
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{baseUrl}}/categories"
+    name: Create Category [Sopas]
+    meta:
+      id: req_91d2b6f77a9e45f2abc1e0cdd11f44fe
+      created: 1766000007000
+      modified: 1766000008000
+      isPrivate: false
+      description: ""
+      sortKey: -1766000007000
+    method: POST
+    body:
+      mimeType: application/json
+      text: '{ "name": "Sopas" }'
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.1.0
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+  - url: "{{baseUrl}}/categories"
+    name: Create Category [Sobremesas]
+    meta:
+      id: req_c7ac1148491a43a184d34d4d3ab91c5a
+      created: 1766000009000
+      modified: 1766000010000
+      isPrivate: false
+      description: ""
+      sortKey: -1766000009000
+    method: POST
+    body:
+      mimeType: application/json
+      text: '{ "name": "Sobremesas" }'
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.1.0
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+# Exemplo para escalonar a quantidade de ingredientes de uma receita
+  - url: "{{baseUrl}}/recipes/ID_DA_RECEITA_AQUI/scale"
+    name: Scale Recipe
+    meta:
+      id: req_9fb3c7d4a6b449f3a8d8ec5a1b7de920
+      created: 1766001000000
+      modified: 1766001001000
+      isPrivate: false
+      description: "Escale a quantidade de ingredientes de uma receita"
+      sortKey: -1766001000000
+    method: POST
+    body:
+      mimeType: application/json
+      text: |
+        {
+          "servings": 12
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.1.0
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+# Exemplo para publicar uma receita que está em rascunho (DRAFT)
+  - url: "{{baseUrl}}/recipes/ID_DA_RECEITA_AQUI/publish"
+    name: Publish Recipe
+    meta:
+      id: req_f2c9ab88a37c4e3e9bd1e4e8c118b0a2
+      created: 1766002000000
+      modified: 1766002001000
+      isPrivate: false
+      description: "Publica uma receita"
+      sortKey: -1766002000000
+    method: POST
+    headers:
+      - name: User-Agent
+        value: insomnia/12.1.0
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+# Exemplo para arquivar uma receita que está publicada (PUBLISSHED)
+  - url: "{{baseUrl}}/recipes/ID_DA_RECEITA_AQUI/archive"
+    name: Archive Recipe
+    meta:
+      id: req_d8f41c7e2b8943b88fd4c9e1a3bb92af
+      created: 1766001100000
+      modified: 1766001101000
+      isPrivate: false
+      description: "Arquiva uma receita"
+      sortKey: -1766001100000
+    method: POST
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: User-Agent
+        value: insomnia/12.1.0
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+
+# FINAL 
   - url: "{{baseUrl}}/categories/1de3de75-1f03-419e-ad86-d803d296ea17"
     name: Show Category
     meta:
