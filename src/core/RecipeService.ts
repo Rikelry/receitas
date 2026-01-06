@@ -206,7 +206,7 @@ export class RecipeService implements IRecipeService {
 
     const current = store.recipes[idx]
 
-    if (current.status !== "draft" || "archived" ) {
+    if (current.status !== "draft" || current.status !== "archived" ) {
       throw new Error("Only draft or archived recipes can be deleted")
     }
 
