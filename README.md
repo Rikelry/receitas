@@ -9,7 +9,8 @@ Aplicação em camadas (SRP) construída com Node.js, TypeScript e Express, com 
 - Instalação
 - Execução
 - Endpoints
-- Lista de compras
+- Atualização do `Insomnia_recipes_requests.yaml`
+- Novas funcionalidades adicionadas
 - Exemplos rápidos (Windows)
 - Estrutura do projeto
 - Colaboradores
@@ -141,17 +142,6 @@ Códigos de erro: as validações retornam `400` com `{ error: "mensagem" }` (mi
   - Crie um ambiente com variável `base_url` e use `{{ base_url }}` nas requisições.
   - Salve exemplos de corpo usando os arquivos em `requests/`.
 
-## Lista de compras 
-A lista de compras **não é um recurso independente** no sistema.
-
-Ela é tratada como uma **ação do contexto de Receitas**, responsável por gerar uma visão consolidada dos ingredientes a partir de múltiplas receitas.
-A lista de compras é um **comportamento do agregado `Recipe`**, e não uma nova entidade do sistema.
-
-### Endpoint
-
-```http
-POST /recipes/actions/shopping-list
-```
 ## Atualização do `Insomnia_recipes_requests.yaml`
 
 ## Novas funcionalidades adicionadas
@@ -242,12 +232,6 @@ receitas/
 - `npm run build` — compila TypeScript
 - `npm start` — executa o build compilado
 - 
-## Colaboradores
-- Francisco de Cássio       User: @Cassiosampaio2016
-- Francisco Mailson         User: @MailsonSousa88
-- Mateus de Araujo          User: @MateusARJ
-- Rikelry Monteiro          User: @Rikelry
-- Vitor Lopes               User: @Vcoder-00
 
 ## Novas funcionalidades adicionadas ao sistema
 
@@ -296,8 +280,15 @@ Recalcula os ingredientes de uma receita para um novo número de porções, sem 
 
 ## Lista de Compras Consolidada
 
-Gera uma lista única de ingredientes combinando múltiplas receitas, somando quantidades iguais sem modificar nenhum dado original.
+A lista de compras **não é um recurso independente** no sistema.
 
+Ela é tratada como uma **ação do contexto de Receitas**, responsável por gerar uma visão consolidada dos ingredientes a partir de múltiplas receitas. A lista de compras é um **comportamento do agregado `Recipe`**, e não uma nova entidade do sistema.
+
+### Endpoint
+
+```http
+POST /recipes/action/shopping-list
+```
 ### Regras que foram implementadas
 - O array recipeIds deve existir e não pode ser vazio.
 - Cada ID deve corresponder a uma receita existente.
@@ -419,3 +410,10 @@ archived → bloqueada para edição e acesso
 ```
 - Draft e Archived são as únicas que podem ser apagadas.
 - Draft não pode ser arquivada, apenas receitas públicas.
+
+## Colaboradores
+- Francisco de Cássio       User: @Cassiosampaio2016
+- Francisco Mailson         User: @MailsonSousa88
+- Mateus de Araujo          User: @MateusARJ
+- Rikelry Monteiro          User: @Rikelry
+- Vitor Lopes               User: @Vcoder-00
