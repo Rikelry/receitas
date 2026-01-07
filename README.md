@@ -318,6 +318,8 @@ Controla o ciclo de vida das receitas, garantindo regras claras para criação, 
 receitas/
 ├─ src/
 │  ├─ core/
+│  │  ├─ utils/
+│  │  │  └─ normalizeText.ts
 │  │  ├─ CategoryService.ts
 │  │  ├─ IngredientService.ts
 │  │  ├─ RecipeService.ts
