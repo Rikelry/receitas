@@ -12,4 +12,9 @@ export interface IRecipeService {
    */
   publish(id: string): Promise<Recipe>
   archive(id: string): Promise<Recipe>
+    /**
+   * CÓDIGO NOVO
+   * Escalonamento inteligente de porções (sem persistência).
+   */
+  scaleRecipe(id: string, newServings: number): Promise<Recipe>
 }

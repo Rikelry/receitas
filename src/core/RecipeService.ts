@@ -117,7 +117,7 @@ export class RecipeService implements IRecipeService {
     store.recipes.push(recipe)
     return recipe
   }
-
+  
   async update(id: string, data: Partial<CreateRecipeInput>): Promise<Recipe> {
     const idx = store.recipes.findIndex(r => r.id === id)
     if (idx < 0) throw new Error("Recipe not found")
@@ -246,5 +246,33 @@ export class RecipeService implements IRecipeService {
 
     recipe.status = "archived"
     return recipe
+  }
+
+    /**
+   * CÓDIGO NOVO
+   * Recalcula quantidades com base em novas porções
+   */
+  async scaleRecipe(id: string, newServings: number): Promise<Recipe> {
+    if (!Number.isInteger(newServings)) {
+      throw new Error("The number of people served must be an integer.")
+    }
+
+    if (newServings <= 0) {
+      throw new Error("Servings must be greater than zero")
+    }
+
+    const recipe = await this.get(id)
+    const factor = Number(newServings / recipe.servings);
+
+    const newIngredients = recipe.ingredients.map(ing => ({
+      ...ing,
+      quantity: Number((ing.quantity * factor).toFixed(2)),
+    }))
+
+    return {
+      ...recipe,
+      ingredients: newIngredients,
+      servings: newServings,
+    }
   }
 }
