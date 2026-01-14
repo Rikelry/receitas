@@ -22,6 +22,11 @@ export class RecipeService implements IRecipeService {
     }
 
     let items = [...store.recipes]
+    /**
+     * MODIFICAÇÃO: Filtragem para retornar apenas receitas publicadas
+     * Apenas receitas com status "published" serão retornadas
+     */
+    items = items.filter(r => r.status === "published")
     
     if (categoryId) {
       items = items.filter(r => r.categoryId === categoryId)
@@ -47,6 +52,13 @@ export class RecipeService implements IRecipeService {
   async get(id: string): Promise<Recipe> {
     const found = store.recipes.find(r => r.id === id)
     if (!found) throw new Error("Recipe not found")
+    /**
+    * MODIFICAÇÃO:
+    * Receitas arquivadas não podem ser acessadas
+    */
+    if (found.status === "archived") {
+      throw new Error("Recipe not found")
+    }
     return found
   }
 
@@ -96,15 +108,27 @@ export class RecipeService implements IRecipeService {
       servings,
       categoryId: input.categoryId,
       createdAt: new Date(),
+      /**
+       * MODIFICAÇÃO: Definição do status inicial da receita como "draft"
+       * @param status - Estado inicial da receita sempre será "draft" ao ser criada
+       */
+      status: "draft"
     }
     store.recipes.push(recipe)
     return recipe
   }
-
+  
   async update(id: string, data: Partial<CreateRecipeInput>): Promise<Recipe> {
     const idx = store.recipes.findIndex(r => r.id === id)
     if (idx < 0) throw new Error("Recipe not found")
     const current = store.recipes[idx]
+    /**
+     * MODIFICAÇÃO:
+     * Receita arquivada não pode ser modificada
+     */
+    if (current.status === "archived") {
+      throw new Error("Recipe is archived and cannot be edited")
+    }
 
     const updated = { ...current }
 
@@ -164,8 +188,127 @@ export class RecipeService implements IRecipeService {
 
   async delete(id: string): Promise<void> {
     const idx = store.recipes.findIndex(r => r.id === id)
-    if (idx >= 0) {
-      store.recipes.splice(idx, 1)
+    if (idx < 0) {
+      throw new Error("Recipe not found")
+    }
+
+    const current = store.recipes[idx]
+
+    /**
+   * MODIFICAÇÃO:
+   * Receitas publicadas não podem ser excluídas
+   * @throws - Lança `Error` se a receita estiver no estado "published".
+   */
+  if (current.status === "published") {
+    throw new Error("Published recipes cannot be deleted")
+  }
+
+    store.recipes.splice(idx, 1)
+  }
+
+  /**
+ * MODIFICAÇÃO: Publica receita (draft → published)
+ * Publica uma receita — altera o campo `status` de "draft" para "published".
+ * @param id - Identificador da receita a ser publicada.
+ * @returns - A promise resolvida com a receita atualizada (`status === "published"`).
+ * @throws - Lança `Error` se a receita não existir ou se seu `status` não for "draft".
+ */
+  async publish(id: string): Promise<Recipe> {
+    const idx = store.recipes.findIndex(r => r.id === id)
+    if (idx < 0) throw new Error("Recipe not found")
+
+    const recipe = store.recipes[idx]
+
+    if (recipe.status !== "draft") {
+      throw new Error("Only draft recipes can be published")
+    }
+
+    recipe.status = "published"
+    return recipe
+  }
+
+  /**
+   * MODIFICAÇÃO: Arquiva receita (published → archived)
+   * Arquiva uma receita — altera o campo `status` de "published" para "archived".
+   * @param id - Identificador da receita a ser arquivada.
+   * @returns - A promise resolvida com a receita atualizada (`status === "archived").
+   * @throws - Lança `Error` se a receita não existir ou se seu `status` não for "published".
+   */
+  async archive(id: string): Promise<Recipe> {
+    const idx = store.recipes.findIndex(r => r.id === id)
+    if (idx < 0) throw new Error("Recipe not found")
+
+    const recipe = store.recipes[idx]
+
+    if (recipe.status !== "published") {
+      throw new Error("Only published recipes can be archived")
+    }
+
+    recipe.status = "archived"
+    return recipe
+  }
+
+    /**
+   * CÓDIGO NOVO
+   * Recalcula quantidades com base em novas porções
+   */
+  async scaleRecipe(id: string, newServings: number): Promise<Recipe> {
+    if (!Number.isInteger(newServings)) {
+      throw new Error("The number of people served must be an integer.")
+    }
+
+    if (newServings <= 0) {
+      throw new Error("Servings must be greater than zero")
+    }
+
+    const recipe = await this.get(id)
+    const factor = Number(newServings / recipe.servings);
+
+    const newIngredients = recipe.ingredients.map(ing => ({
+      ...ing,
+      quantity: Number((ing.quantity * factor).toFixed(2)),
+    }))
+
+    return {
+      ...recipe,
+      ingredients: newIngredients,
+      servings: newServings,
     }
   }
+
+  /**
+ * CÓDIGO NOVO
+ * Gera lista de compras consolidada
+ */
+async generateShoppingList(recipeIds: string[]) {
+  if (!Array.isArray(recipeIds) || recipeIds.length === 0) {
+    throw new Error("Recipe IDs are required")
+  }
+
+  const list: { ingredientId: string; unit: string; quantity: number }[] = []
+
+  for (const id of recipeIds) {
+    const recipe = await this.get(id)
+
+    for (const ing of recipe.ingredients) {
+      const existing = list.find(
+        item =>
+          item.ingredientId === ing.ingredientId &&
+          item.unit === ing.unit
+      )
+
+      if (existing) {
+        existing.quantity += ing.quantity
+      } else {
+        list.push({
+          ingredientId: ing.ingredientId,
+          unit: ing.unit,
+          quantity: ing.quantity,
+        })
+      }
+    }
+  }
+
+  return list
+}
 }

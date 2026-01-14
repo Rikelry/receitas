@@ -33,10 +33,10 @@ export function recipesRoutes(service: IRecipeService) {
         description: req.body.description,
         ingredients: Array.isArray(req.body.ingredients)
           ? req.body.ingredients.map((i: any) => ({
-              name: String(i?.name ?? ""),
-              quantity: Number(i?.quantity ?? 0),
-              unit: String(i?.unit ?? ""),
-            }))
+            name: String(i?.name ?? ""),
+            quantity: Number(i?.quantity ?? 0),
+            unit: String(i?.unit ?? ""),
+          }))
           : [],
         steps: Array.isArray(req.body.steps) ? req.body.steps.map(String) : [],
         servings: Number(req.body.servings ?? 0),
@@ -64,6 +64,22 @@ export function recipesRoutes(service: IRecipeService) {
     }
   })
 
+  /**
+   * NOVO: rota para escalonamento de receitas 
+   */
+
+  router.post("/:id/scale", async (req, res, next) => {
+    try {
+      const servings = Number(req.body.servings);
+      const recipe = await service.scaleRecipe(req.params.id, servings);
+
+      res.json(recipe);
+    }
+    catch (error) {
+      next(error)
+    }
+  })
+
   router.delete("/:id", async (req, res, next) => {
     try {
       await service.delete(req.params.id)
@@ -73,6 +89,42 @@ export function recipesRoutes(service: IRecipeService) {
     }
   })
 
+  /**
+  * Endpoint para publicar receita (draft → published)
+  */
+  router.post("/:id/publish", async (req, res, next) => {
+    try {
+      const recipe = await service.publish(req.params.id)
+      res.json(recipe)
+    } catch (error) {
+      next(error)
+    }
+  })
+
+  /**
+  * Endpoint para arquivar receita (published → archived)
+  */
+  router.post("/:id/archive", async (req, res, next) => {
+    try {
+      const recipe = await service.archive(req.params.id)
+      res.json(recipe)
+    } catch (error) {
+      next(error)
+    }
+  })
+
+  /**
+   * Endpoint para geração de lista de compras consolidada
+   */
+  router.post("/action/shopping-list", async (req, res, next) => {
+    try {
+      const recipeIds = req.body.recipeIds
+      const result = await service.generateShoppingList(recipeIds)
+      res.json(result)
+    } catch (error) {
+      next(error)
+    }
+  })
+
   return router
 }
-
