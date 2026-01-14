@@ -65,6 +65,9 @@ collection:
       description: "Consolida uma lista de receitas"
       sortKey: -1767000000000
     method: POST
+    body:
+      mimeType: application/json
+      text: '{ "recipesIds": ["ID_DA_RECEITA_1_AQUI", "ID_DA_RECEITA_2_AQUI"] }'
     headers:
       - name: User-Agent
         value: insomnia/12.2.0
@@ -131,7 +134,7 @@ collection:
         store: true
       rebuildPath: true
 
-  # Parte atualizada por Mailson Sousa
+  # Exemplos de categorias pre-definidas
 
   - url: "{{baseUrl}}/categories"
     name: Create Category [Carnes]
@@ -351,7 +354,7 @@ collection:
         store: true
       rebuildPath: true
 
-# Parte feita pelo Cássio
+# Exemplo de receitas pre-definidas
   - url: "{{baseUrl}}/recipes"
     name: Create Recipe [ carne assada ]
     meta:
