@@ -124,12 +124,19 @@ export class RecipeService implements IRecipeService {
     store.recipes.push(recipe)
     return recipe
   }
-
+  
   async update(id: string, data: Partial<CreateRecipeInput>): Promise<Recipe> {
     const idx = store.recipes.findIndex(r => r.id === id)
     if (idx < 0) throw new Error("Recipe not found")
 
     const current = store.recipes[idx]
+    /**
+     * MODIFICAÇÃO:
+     * Receita arquivada não pode ser modificada
+     */
+    if (current.status === "archived") {
+      throw new Error("Recipe is archived and cannot be edited")
+    }
 
     /**
      * CÓDIGO NOVO
@@ -312,4 +319,7 @@ export class RecipeService implements IRecipeService {
     recipe.status = "archived"
     return recipe
   }
+
+  return list
+}
 }
