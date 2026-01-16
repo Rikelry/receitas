@@ -55,7 +55,7 @@ collection:
       rebuildPath: true
 
 # Exemplo para consolidar uma lista
-  - url: "{{baseUrl}}/action/shopping-list"
+  - url: "{{baseUrl}}/recipes/action/shopping-list"
     name: Consolidate Recipes
     meta:
       id: req_consolidate_recipes
@@ -67,12 +67,14 @@ collection:
     method: POST
     body:
       mimeType: application/json
-      text: '{ "recipesIds": ["ID_DA_RECEITA_1_AQUI", "ID_DA_RECEITA_2_AQUI"] }'
+      text: '{ "recipeIds": ["ID_DA_RECEITA_1_AQUI", "ID_DA_RECEITA_2_AQUI"] }'
     headers:
+      - name: Content-Type
+        value: application/json
       - name: User-Agent
         value: insomnia/12.2.0
     settings:
-      renderRequestBody: false
+      renderRequestBody: true
       encodeUrl: true
       followRedirects: global
       cookies:

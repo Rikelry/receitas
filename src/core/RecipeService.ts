@@ -138,14 +138,6 @@ export class RecipeService implements IRecipeService {
       throw new Error("Recipe is archived and cannot be edited")
     }
 
-    /**
-     * CÓDIGO NOVO
-     * Receita arquivada não pode ser alterada
-     */
-    if (current.status === "archived") {
-      throw new Error("Recipe is archived and cannot be edited")
-    }
-
     const updated = { ...current }
 
     if (data.categoryId) {
@@ -319,7 +311,4 @@ export class RecipeService implements IRecipeService {
     recipe.status = "archived"
     return recipe
   }
-
-  return list
-}
 }
