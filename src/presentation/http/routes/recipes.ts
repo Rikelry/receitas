@@ -68,18 +68,6 @@ export function recipesRoutes(service: IRecipeService) {
    * NOVO: rota para escalonamento de receitas 
    */
 
-  router.post("/:id/scale", async (req, res, next) => {
-    try {
-      const servings = Number(req.body.servings);
-      const recipe = await service.scaleRecipe(req.params.id, servings);
-
-      res.json(recipe);
-    }
-    catch (error) {
-      next(error)
-    }
-  })
-
   router.delete("/:id", async (req, res, next) => {
     try {
       await service.delete(req.params.id)
@@ -104,10 +92,10 @@ export function recipesRoutes(service: IRecipeService) {
     }
   })
 
- /**
+  /**
    * CÓDIGO NOVO
    * Endpoint para geração de lista de compras consolidada
-   *  Ação do contexto de receitas para geração de lista de compras consolidada
+   * Ação do contexto de receitas para geração de lista de compras consolidada
    */
   router.post("/action/shopping-list", async (req, res, next) => {
     try {
