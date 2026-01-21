@@ -33,10 +33,10 @@ export function recipesRoutes(service: IRecipeService) {
         description: req.body.description,
         ingredients: Array.isArray(req.body.ingredients)
           ? req.body.ingredients.map((i: any) => ({
-              name: String(i?.name ?? ""),
-              quantity: Number(i?.quantity ?? 0),
-              unit: String(i?.unit ?? ""),
-            }))
+            name: String(i?.name ?? ""),
+            quantity: Number(i?.quantity ?? 0),
+            unit: String(i?.unit ?? ""),
+          }))
           : [],
         steps: Array.isArray(req.body.steps) ? req.body.steps.map(String) : [],
         servings: Number(req.body.servings ?? 0),
@@ -64,6 +64,10 @@ export function recipesRoutes(service: IRecipeService) {
     }
   })
 
+  /**
+   * NOVO: rota para escalonamento de receitas 
+   */
+
   router.delete("/:id", async (req, res, next) => {
     try {
       await service.delete(req.params.id)
@@ -88,10 +92,10 @@ export function recipesRoutes(service: IRecipeService) {
     }
   })
 
- /**
+  /**
    * CÓDIGO NOVO
    * Endpoint para geração de lista de compras consolidada
-   *  Ação do contexto de receitas para geração de lista de compras consolidada
+   * Ação do contexto de receitas para geração de lista de compras consolidada
    */
   router.post("/action/shopping-list", async (req, res, next) => {
     try {

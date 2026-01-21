@@ -15,6 +15,19 @@ export class CategoryService implements ICategoryService {
     return found
   }
 
+  /**
+ * CÓDIGO MODIFICADO
+ *
+ * Implementa busca por nome de categoria de forma que ignora espaços adicionais e
+ * vira case-insensitive.
+ *
+ * A função `normalizeText` remove acentos, converte para minúsculas e aplica
+ * `.trim()`, garantindo que variações como:
+ * "Sobremesas", " sobremesas ", "SÔBREMESAS" ou "sôbremesas" sejam tratadas como equivalentes.
+ *
+ * Isso impede duplicidades lógicas e garante integridade e consistência
+ * dos dados no sistema.
+ */
   async findByName(name: string): Promise<Category | undefined> {
   const normalized = normalizeText(name)
 
